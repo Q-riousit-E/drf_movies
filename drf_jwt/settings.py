@@ -164,3 +164,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Django 3.2 update related configuration
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
