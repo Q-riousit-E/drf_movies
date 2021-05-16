@@ -42,19 +42,22 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'accounts',
+
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'rest_framework_simplejwt.token_blacklist',
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.sites',
     'django.contrib.staticfiles',
 ]
 
@@ -70,6 +73,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'accounts.middleware.MoveJWTCookieIntoTheBody',
+    'accounts.middleware.MoveJWTRefreshCookieIntoTheBody',
 ]
 
 REST_FRAMEWORK = {
@@ -86,8 +92,8 @@ REST_FRAMEWORK = {
 
 
 REST_USE_JWT = True
-JWT_AUTH_COOKIE = 'my-app-auth'
-JWT_AUTH_REFRESH_COOKIE = 'my-refresh-token'
+JWT_AUTH_COOKIE = 'token'
+JWT_AUTH_REFRESH_COOKIE = 'refresh-token'
 
 ROOT_URLCONF = 'drf_jwt.urls'
 
