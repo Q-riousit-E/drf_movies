@@ -17,9 +17,8 @@ import json
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent
-ROOT_DIR = os.path.dirname(BASE_DIR)
-SECRETS_PATH = os.path.join(ROOT_DIR, 'secrets.json')
+BASE_DIR = Path(__file__).resolve().parent.parent
+SECRETS_PATH = os.path.join(BASE_DIR, 'secrets.json')
 
 # json 파일을 python 객체로 변환
 secrets = json.loads(open(SECRETS_PATH).read())
