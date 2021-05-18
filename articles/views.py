@@ -20,3 +20,24 @@ def article_list(request):
         if serializer.is_valid(raise_exception=True):
             serializer.save(user_id=request.data.get('user_id'))
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([])
+@permission_classes([])
+def article_detail(request, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    if request.method == 'GET':
+        serializer = ArticleSerializer(article)
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        article.delete()
+        data = {
+            'success': True,
+        }
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'PUT':
+        serializer = ArticleSerializer(instance=article, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
