@@ -52,3 +52,21 @@ def create_comment(request, article_pk):
     if serializer.is_valid(raise_exception=True):
         serializer.save(user_id=request.data.get('user_id'), article=article)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['PUT', 'DELETE', ])
+@authentication_classes([])
+@permission_classes([])
+def comment_detail(request, article_pk, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    if request.method == 'DELETE':
+        comment.delete()
+        data = {
+            'success': True,
+        }
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'PUT':
+        serializer = CommentSerializer(instance=comment, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
