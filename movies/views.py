@@ -1,10 +1,25 @@
 from django.shortcuts import get_list_or_404, get_object_or_404
-from .models import Article, Comment, Movie
-from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSerializer
+from .models import Article, Comment, Movie, Genre
+from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSerializer, GenreSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 # Create your views here.
+
+
+@api_view(['GET', 'POST'])
+@authentication_classes([])
+@permission_classes([])
+def genre_list(request):
+    if request.method == 'GET':
+        genres = get_list_or_404(Genre)
+        serializer = GenreSerializer(genres, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = GenreSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 @api_view(['GET', 'POST'])

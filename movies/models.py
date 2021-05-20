@@ -33,4 +33,5 @@ class Movie(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(max_length=100)
+    number = models.IntegerField()
     movies = models.ManyToManyField(Movie, related_name='genres')
