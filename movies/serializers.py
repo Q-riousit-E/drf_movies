@@ -37,7 +37,7 @@ class MovieIndexListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Movie
-        fields = ('id', 'title', 'vote_average', 'popularity', 'poster_path',)
+        fields = ('id', 'poster_path',)
 
 
 class GenreSerializer(serializers.ModelSerializer):
