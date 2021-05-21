@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 
 class Scraper:
     BASE_URL = 'https://api.themoviedb.org/3'
+    POSTER_BASE_URL = 'https://image.tmdb.org/t/p/original'
     API_KEY = 'b19c89dd8bffcd21e75f82a15020c75c'
 
     def get_genres(self):
@@ -32,6 +33,8 @@ class Scraper:
             movies = res.json()['results']
             for movie in movies:
                 genre_ids = movie['genre_ids']
+                if movie.get('poster_path'):
+                    movie['poster_path'] = f'{self.POSTER_BASE_URL}{movie["poster_path"]}'
                 serializer = MovieSerializer(data=movie)
                 try:
                     if serializer.is_valid(raise_exception=True):
