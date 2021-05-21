@@ -75,7 +75,7 @@ def movie_index(request):
         get_object_or_404(Genre, number=878).movies.order_by('-release_date')[:20], many=True)
 
     data = {
-        'Action': action.data,
+        'action': action.data,
         'animation': animation.data,
         'comedy': comedy.data,
         'horror': horror.data,
