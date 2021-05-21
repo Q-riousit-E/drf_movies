@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import datetime
 import sys
 import os
 import json
@@ -159,3 +160,8 @@ REST_FRAMEWORK = {
 # ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+
+# JW
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=6),
+}
