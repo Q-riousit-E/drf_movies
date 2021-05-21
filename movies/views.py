@@ -6,6 +6,8 @@ from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerial
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
 
@@ -81,64 +83,73 @@ def movie_detail(request, movie_pk):
 
 
 @api_view(['GET', 'POST'])
-@authentication_classes([])
 @permission_classes([])
-def article_list(request):
+def article_list(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
     if request.method == 'GET':
-        articles = get_list_or_404(Article)
+        articles = get_list_or_404(Article, movie=movie)
         serializer = ArticleListSerializer(articles, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
+        if not request.user.is_authenticated:
+            return Response({'error': '리뷰를 작성하기 위해서는 사용자 인증 정보가 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            serializer.save(user_id=request.data.get('user_id'))
+            serializer.save(user=request.user, movie=movie)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-@authentication_classes([])
-@permission_classes([])
+@ api_view(['GET', 'PUT', 'DELETE'])
+@ permission_classes([])
 def article_detail(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     if request.method == 'GET':
         serializer = ArticleSerializer(article)
         return Response(serializer.data)
     elif request.method == 'DELETE':
+        if not request.user.is_authenticated:
+            return Response({'error': '리뷰를 삭제하기 위해서는 사용자 인증 정보가 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if request.user != article.user:
+            return Response({'error': '해당 리뷰를 삭제할 수 있는 권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
         article.delete()
         data = {
             'success': True,
         }
         return Response(data, status=status.HTTP_204_NO_CONTENT)
     elif request.method == 'PUT':
+        if not request.user.is_authenticated:
+            return Response({'error': '리뷰를 수정하기 위해서는 사용자 인증 정보가 필요합니다.'}, status=status.HTTP_401_UNAUTHORIZED)
+        if request.user != article.user:
+            return Response({'error': '해당 게시물을 수정할 수 있는 권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
         serializer = ArticleSerializer(instance=article, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
 
 
-@api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
+@ api_view(['POST'])
 def create_comment(request, article_pk):
     article = get_object_or_404(Article, pk=article_pk)
     serializer = CommentSerializer(data=request.data)
     if serializer.is_valid(raise_exception=True):
-        serializer.save(user_id=request.data.get('user_id'), article=article)
+        serializer.save(user=request.user, article=article)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['PUT', 'DELETE', ])
-@authentication_classes([])
-@permission_classes([])
+@ api_view(['PUT', 'DELETE', ])
 def comment_detail(request, article_pk, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
     if request.method == 'DELETE':
+        if request.user != comment.user:
+            return Response({'error': '해당 댓글을 삭제할 수 있는 권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
         comment.delete()
         data = {
             'success': True,
         }
         return Response(data, status=status.HTTP_204_NO_CONTENT)
     elif request.method == 'PUT':
+        if request.user != comment.user:
+            return Response({'error': '해당 댓글을 수정할 수 있는 권한이 없습니다.'}, status=status.HTTP_403_FORBIDDEN)
         serializer = CommentSerializer(instance=comment, data=request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()

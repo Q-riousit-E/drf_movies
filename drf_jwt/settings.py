@@ -161,7 +161,8 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-# JW
+
+# djangorestframework-jwt related settings
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=6),
 }
