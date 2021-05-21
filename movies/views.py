@@ -137,7 +137,7 @@ def create_comment(request, article_pk):
 
 
 @ api_view(['PUT', 'DELETE', ])
-def comment_detail(request, article_pk, comment_pk):
+def comment_detail(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
     if request.method == 'DELETE':
         if request.user != comment.user:
