@@ -25,21 +25,6 @@ def genre_list(request):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
-def genre_add_movie(request, genre_number):
-    genre = get_object_or_404(Genre, number=genre_number)
-    movie_id = request.data.get('movie_id')
-    print(movie_id)
-    movie = get_object_or_404(Movie, pk=movie_id)
-    genre.movies.add(movie)
-    data = {
-        'success': True,
-    }
-    return Response(data, status=status.HTTP_201_CREATED)
-
-
 @api_view(['GET', 'POST'])
 @authentication_classes([])
 @permission_classes([])
