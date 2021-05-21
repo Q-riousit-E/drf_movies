@@ -1,7 +1,8 @@
+from django.db.models import manager
+from django.http.response import JsonResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
-from django.core import serializers
 from .models import Article, Comment, Movie, Genre
-from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSerializer, GenreSerializer
+from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSerializer, GenreSerializer, MovieIndexListSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -52,6 +53,37 @@ def movie_list(request):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def movie_index(request):
+    # Action, Animation, Comedy, Horror, Romance, Science Fiction
+    genre_ids = [28, 16, 35, 27, 10749, 878]
+    action = MovieIndexListSerializer(
+        get_object_or_404(Genre, number=28).movies.order_by('-release_date')[:20], many=True)
+    animation = MovieIndexListSerializer(
+        get_object_or_404(Genre, number=16).movies.order_by('-release_date')[:20], many=True)
+    comedy = MovieIndexListSerializer(
+        get_object_or_404(Genre, number=35).movies.order_by('-release_date')[:20], many=True)
+    horror = MovieIndexListSerializer(
+        get_object_or_404(Genre, number=27).movies.order_by('-release_date')[:20], many=True)
+    romance = MovieIndexListSerializer(
+        get_object_or_404(Genre, number=10749).movies.order_by('-release_date')[:20], many=True)
+    sci_fi = MovieIndexListSerializer(
+        get_object_or_404(Genre, number=878).movies.order_by('-release_date')[:20], many=True)
+
+    data = {
+        'Action': action.data,
+        'animation': animation.data,
+        'comedy': comedy.data,
+        'horror': horror.data,
+        'romance': romance.data,
+        'sci_fi': sci_fi.data,
+    }
+
+    return JsonResponse(data)
 
 
 @api_view(['GET', 'POST'])
