@@ -9,6 +9,7 @@ class Movie(models.Model):
     title = models.CharField(max_length=100)
     overview = models.TextField()
     poster_path = models.CharField(max_length=200)
+    trailer_path = models.CharField(max_length=300, null=True)
     popularity = models.FloatField()
     vote_average = models.FloatField()
     vote_count = models.IntegerField()
