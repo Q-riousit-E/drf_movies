@@ -49,17 +49,17 @@ def movie_index(request):
     # Action, Animation, Comedy, Horror, Romance, Science Fiction
     genre_ids = [28, 16, 35, 27, 10749, 878]
     action = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=28).movies.order_by('-release_date')[:20], many=True)
+        get_object_or_404(Genre, number=28).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
     animation = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=16).movies.order_by('-release_date')[:20], many=True)
+        get_object_or_404(Genre, number=16).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
     # comedy = MovieIndexListSerializer(
-    #     get_object_or_404(Genre, number=35).movies.order_by('-release_date')[:20], many=True)
+    #     get_object_or_404(Genre, number=35).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
     horror = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=27).movies.order_by('-release_date')[:20], many=True)
+        get_object_or_404(Genre, number=27).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
     romance = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=10749).movies.order_by('-release_date')[:20], many=True)
+        get_object_or_404(Genre, number=10749).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
     sci_fi = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=878).movies.order_by('-release_date')[:20], many=True)
+        get_object_or_404(Genre, number=878).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
 
     data = {
         'action': action.data,
