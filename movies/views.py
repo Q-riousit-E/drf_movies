@@ -52,8 +52,8 @@ def movie_index(request):
         get_object_or_404(Genre, number=28).movies.order_by('-release_date')[:20], many=True)
     animation = MovieIndexListSerializer(
         get_object_or_404(Genre, number=16).movies.order_by('-release_date')[:20], many=True)
-    comedy = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=35).movies.order_by('-release_date')[:20], many=True)
+    # comedy = MovieIndexListSerializer(
+    #     get_object_or_404(Genre, number=35).movies.order_by('-release_date')[:20], many=True)
     horror = MovieIndexListSerializer(
         get_object_or_404(Genre, number=27).movies.order_by('-release_date')[:20], many=True)
     romance = MovieIndexListSerializer(
@@ -64,7 +64,7 @@ def movie_index(request):
     data = {
         'action': action.data,
         'animation': animation.data,
-        'comedy': comedy.data,
+        # 'comedy': comedy.data,
         'horror': horror.data,
         'romance': romance.data,
         'sci_fi': sci_fi.data,
