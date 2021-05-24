@@ -1,8 +1,8 @@
 from django.db.models import manager
 from django.http.response import JsonResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
-from .models import Article, Comment, Movie, Genre
-from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSerializer, GenreSerializer, MovieIndexListSerializer
+from .models import Article, Comment, Movie, Genre, SimpleRating
+from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSerializer, GenreSerializer, MovieIndexListSerializer, SimpleRatingSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
@@ -80,6 +80,36 @@ def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     serializer = MovieSerializer(movie)
     return Response(serializer.data)
+
+
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+def movie_simple_rating(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    if request.method == 'GET':
+        rating = get_object_or_404(
+            SimpleRating, movie=movie, user=request.user)
+        serializer = SimpleRatingSerializer(rating)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = SimpleRatingSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save(user=request.user, movie=movie)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+    elif request.method == 'DELETE':
+        rating = get_object_or_404(
+            SimpleRating, movie=movie, user=request.user)
+        rating.delete()
+        data = {
+            'success': True,
+        }
+        return Response(data, status=status.HTTP_204_NO_CONTENT)
+    elif request.method == 'PUT':
+        rating = get_object_or_404(
+            SimpleRating, movie=movie, user=request.user)
+        serializer = SimpleRatingSerializer(instance=rating, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])

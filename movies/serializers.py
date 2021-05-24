@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Article, Comment, Movie, Genre
+from .models import Article, Comment, Movie, Genre, SimpleRating
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
@@ -47,3 +47,11 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         exclude = ('movies',)
+
+
+class SimpleRatingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = SimpleRating
+        fields = '__all__'
+        read_only_fields = ('movie', 'user',)

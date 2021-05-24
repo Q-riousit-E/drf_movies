@@ -43,3 +43,10 @@ class Genre(models.Model):
     name = models.CharField(max_length=100)
     number = models.IntegerField(unique=True)
     movies = models.ManyToManyField(Movie, related_name='genres')
+
+
+class SimpleRating(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    rating = models.FloatField()
