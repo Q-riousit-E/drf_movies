@@ -65,7 +65,7 @@ class SimpleRating(models.Model):
     rating = models.FloatField()
 
     def __str__(self):
-        return f'{self.user}\'s simple rating about {self.movie.title}'
+        return f'{self.user.username}\'s simple rating about {self.movie.title}'
 
 
 class DetailedRating(models.Model):
@@ -80,4 +80,4 @@ class DetailedRating(models.Model):
     entertainment_value = models.FloatField()
 
     def __str__(self):
-        return f'{self.user.usernamne}\'s detailed rating about {self.movie.title}'
+        return f'{self.user.username}\'s detailed rating about {self.movie.title}'

@@ -1,7 +1,6 @@
 from movies.models import Movie, Genre
 from movies.serializers import MovieSerializer
 import requests
-from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
 from dotenv import load_dotenv
 import os
