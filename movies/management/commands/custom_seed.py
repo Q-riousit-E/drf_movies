@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class UserSeeder():
-    def __init__(self, number=50):
+    def __init__(self, number=100):
         self.seeder = Seed.seeder()
         self.number = number
 
@@ -106,9 +106,9 @@ class Command(BaseCommand):
         MOVIE_USER_IDX_COMBINATIONS = [(i, j) for i in range(
             len(MOVIES)) for j in range(len(INSERTED_USERS))]
         simple_rating_generator = SimpleRatingGenerator(users=INSERTED_USERS, movie_user_idx_combinations=MOVIE_USER_IDX_COMBINATIONS,
-                                                        max_number=1000, movies=MOVIES)
+                                                        max_number=len(INSERTED_USERS)*len(MOVIES), movies=MOVIES)
         simple_rating_generator.execute()
 
         detailed_rating_generator = DetailedRatingGenerator(users=INSERTED_USERS, movie_user_idx_combinations=MOVIE_USER_IDX_COMBINATIONS,
-                                                            max_number=1000, movies=MOVIES)
+                                                            max_number=len(INSERTED_USERS)*len(MOVIES), movies=MOVIES)
         detailed_rating_generator.execute()
