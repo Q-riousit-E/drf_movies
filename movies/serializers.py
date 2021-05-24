@@ -31,6 +31,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 class MovieSerializer(serializers.ModelSerializer):
     simple_rating_counts = serializers.SerializerMethodField()
     detailed_ratings_average = serializers.SerializerMethodField()
+    genre_names = serializers.SerializerMethodField()
 
     def get_simple_rating_counts(self, obj):
         ratings = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0)
@@ -53,6 +54,11 @@ class MovieSerializer(serializers.ModelSerializer):
             if key:
                 detailed_ratings[key] = round(detailed_ratings.get(key), 1)
         return detailed_ratings
+
+    def get_genre_names(self, obj):
+        genres = obj.genres.all()
+        genre_names = [genres[i].name for i in range(len(genres))]
+        return genre_names
 
     class Meta:
         model = Movie
