@@ -11,7 +11,7 @@ load_dotenv(verbose=True)
 
 class Scraper:
     BASE_URL = 'https://api.themoviedb.org/3'
-    POSTER_BASE_URL = 'https://image.tmdb.org/t/p/original'
+    IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/original'
     TRAILER_BASE_URL = 'https://youtube.com/embed'
     API_KEY = os.environ.get('TMDB_API_KEY')
 
@@ -48,12 +48,16 @@ class Scraper:
             res = requests.get(MOIVE_URL, params=params)
             movies = res.json()['results']
             for movie in movies:
+                movie_id = movie.get('id')
                 genre_ids = movie['genre_ids']
                 if movie.get('poster_path'):
-                    movie['poster_path'] = f'{self.POSTER_BASE_URL}{movie["poster_path"]}'
-                movie_key = self.get_video_key(movie.get('id'))
+                    movie['poster_path'] = f'{self.IMAGE_BASE_URL}{movie["poster_path"]}'
+                movie_key = self.get_video_key(movie_id)
                 if movie_key:
                     movie['trailer_path'] = f'{self.TRAILER_BASE_URL}/{movie_key}'
+                credit_info = self.get_credit_info(movie_id)
+                for key, value in credit_info.items():
+                    movie[f'{key}'] = value
                 serializer = MovieSerializer(data=movie)
                 try:
                     if serializer.is_valid(raise_exception=True):
@@ -66,6 +70,28 @@ class Scraper:
                             pass
                 except:
                     pass
+
+    def get_credit_info(self, movie_id):
+        CREDITS_URL = f'{self.BASE_URL}/movie/{movie_id}/credits'
+        params = {'api_key': self.API_KEY}
+        res = requests.get(CREDITS_URL, params=params)
+        data = res.json()
+        casts = data.get('cast')
+        info = {}
+        if len(casts):
+            i = 1
+            for cast in casts[:3]:
+                info[f'cast{i}_name'] = cast.get('name')
+                info[f'cast{i}_character'] = cast.get('character')
+                i += 1
+        crews = data.get('crew')
+        for crew in crews:
+            if not crew.get('job') == 'Director':
+                continue
+            info['director_name'] = crew.get('name')
+            break
+
+        return info
 
 
 class Command(BaseCommand):

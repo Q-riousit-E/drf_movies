@@ -14,6 +14,10 @@ class Movie(models.Model):
     vote_average = models.FloatField()
     vote_count = models.IntegerField()
     release_date = models.DateField()
+    director_name = models.CharField(max_length=100, null=True)
+    cast1_name = models.CharField(max_length=100, null=True)
+    cast2_name = models.CharField(max_length=100, null=True)
+    cast3_name = models.CharField(max_length=100, null=True)
 
 
 class Article(models.Model):
