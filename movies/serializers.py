@@ -36,7 +36,7 @@ class MovieSerializer(serializers.ModelSerializer):
         average = obj.simple_ratings.all().aggregate(Avg('rating')).get('rating__avg')
         if average == None:
             return 0
-        return average
+        return round(average, 1)
 
     def get_detailed_ratings_average(self, obj):
         detailed_ratings = {
@@ -47,6 +47,9 @@ class MovieSerializer(serializers.ModelSerializer):
             'music_score_average': obj.detailed_ratings.all().aggregate(Avg('music_score')).get('music_score__avg') or 0,
             'entertainment_value_average': obj.detailed_ratings.all().aggregate(Avg('entertainment_value')).get('entertainment_value__avg') or 0,
         }
+        for key, value in detailed_ratings.items():
+            if key:
+                detailed_ratings[key] = round(detailed_ratings.get(key), 1)
         return detailed_ratings
 
     class Meta:
