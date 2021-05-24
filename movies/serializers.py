@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Avg
 from rest_framework import serializers
 from .models import Article, Comment, DetailedRating, Movie, Genre, SimpleRating
 
@@ -28,6 +29,13 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class MovieSerializer(serializers.ModelSerializer):
+    star_average = serializers.SerializerMethodField()
+
+    def get_star_average(self, obj):
+        average = obj.simple_ratings.all().aggregate(Avg('rating')).get('rating__avg')
+        if average == None:
+            return 0
+        return average
 
     class Meta:
         model = Movie
