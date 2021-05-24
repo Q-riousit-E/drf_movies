@@ -60,8 +60,9 @@ class Genre(models.Model):
 
 class SimpleRating(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+                             on_delete=models.CASCADE, related_name='simple_ratings')
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, related_name='simple_ratings')
     rating = models.FloatField(
         validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
 
@@ -77,8 +78,9 @@ class SimpleRating(models.Model):
 
 class DetailedRating(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+                             on_delete=models.CASCADE, related_name='detailed_ratings')
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, related_name='detailed_ratings')
     originality = models.FloatField(
         validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
     plot = models.FloatField(
