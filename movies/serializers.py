@@ -30,12 +30,24 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     star_average = serializers.SerializerMethodField()
+    detailed_ratings_average = serializers.SerializerMethodField()
 
     def get_star_average(self, obj):
         average = obj.simple_ratings.all().aggregate(Avg('rating')).get('rating__avg')
         if average == None:
             return 0
         return average
+
+    def get_detailed_ratings_average(self, obj):
+        detailed_ratings = {
+            'originality_average': obj.detailed_ratings.all().aggregate(Avg('originality')).get('originality__avg') or 0,
+            'plot_average': obj.detailed_ratings.all().aggregate(Avg('plot')).get('plot__avg') or 0,
+            'characters_average': obj.detailed_ratings.all().aggregate(Avg('characters')).get('characters__avg') or 0,
+            'cinematography_average': obj.detailed_ratings.all().aggregate(Avg('cinematography')).get('cinematography__avg') or 0,
+            'music_score_average': obj.detailed_ratings.all().aggregate(Avg('music_score')).get('music_score__avg') or 0,
+            'entertainment_value_average': obj.detailed_ratings.all().aggregate(Avg('entertainment_value')).get('entertainment_value__avg') or 0,
+        }
+        return detailed_ratings
 
     class Meta:
         model = Movie
