@@ -20,6 +20,9 @@ class Movie(models.Model):
     cast2_name = models.CharField(max_length=100, null=True)
     cast3_name = models.CharField(max_length=100, null=True)
 
+    def __str__(self):
+        return self.title
+
 
 class Article(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -30,6 +33,9 @@ class Article(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f'{self.user.usernamne}\'s review about {self.movie.title}'
+
 
 class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -39,11 +45,17 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f'{self.user}\'s comment on review about {self.movie.title}'
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=100)
     number = models.IntegerField(unique=True)
     movies = models.ManyToManyField(Movie, related_name='genres')
+
+    def __str__(self):
+        return self.name
 
 
 class SimpleRating(models.Model):
@@ -51,6 +63,9 @@ class SimpleRating(models.Model):
                              on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     rating = models.FloatField()
+
+    def __str__(self):
+        return f'{self.user}\'s simple rating about {self.movie.title}'
 
 
 class DetailedRating(models.Model):
@@ -63,3 +78,6 @@ class DetailedRating(models.Model):
     music_score = models.FloatField()
     characters = models.FloatField()
     entertainment_value = models.FloatField()
+
+    def __str__(self):
+        return f'{self.user.usernamne}\'s detailed rating about {self.movie.title}'
