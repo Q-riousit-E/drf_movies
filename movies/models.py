@@ -21,7 +21,7 @@ class Movie(models.Model):
     cast3_name = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return self.title
+        return f'({self.pk}) {self.title}'
 
 
 class Article(models.Model):
@@ -34,7 +34,7 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.user.usernamne}\'s review about {self.movie.title}'
+        return f'({self.pk}) {self.user.usernamne}\'s review about {self.movie.title}'
 
 
 class Comment(models.Model):
@@ -46,7 +46,7 @@ class Comment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.user}\'s comment on review about {self.movie.title}'
+        return f'({self.pk}) {self.user}\'s comment on review about {self.movie.title}'
 
 
 class Genre(models.Model):
@@ -55,7 +55,7 @@ class Genre(models.Model):
     movies = models.ManyToManyField(Movie, related_name='genres')
 
     def __str__(self):
-        return self.name
+        return f'({self.pk}) {self.name}'
 
 
 class SimpleRating(models.Model):
@@ -73,7 +73,7 @@ class SimpleRating(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user.username}\'s simple rating about {self.movie.title}'
+        return f'({self.pk}) {self.user.username}\'s simple rating about {self.movie.title}'
 
 
 class DetailedRating(models.Model):
@@ -101,4 +101,4 @@ class DetailedRating(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user.username}\'s detailed rating about {self.movie.title}'
+        return f'({self.pk}) {self.user.username}\'s detailed rating about {self.movie.title}'
