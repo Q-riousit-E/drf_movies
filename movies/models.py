@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.fields import FloatField
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 
@@ -62,7 +62,8 @@ class SimpleRating(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    rating = models.FloatField()
+    rating = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
 
     def __str__(self):
         return f'{self.user.username}\'s simple rating about {self.movie.title}'
@@ -72,12 +73,18 @@ class DetailedRating(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    originality = models.FloatField()
-    plot = models.FloatField()
-    cinematography = models.FloatField()
-    music_score = models.FloatField()
-    characters = models.FloatField()
-    entertainment_value = models.FloatField()
+    originality = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
+    plot = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
+    cinematography = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
+    music_score = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
+    characters = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
+    entertainment_value = models.FloatField(
+        validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
 
     def __str__(self):
         return f'{self.user.username}\'s detailed rating about {self.movie.title}'
