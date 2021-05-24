@@ -65,6 +65,12 @@ class SimpleRating(models.Model):
     rating = models.FloatField(
         validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'movie'], name='unique_simple_rating')
+        ]
+
     def __str__(self):
         return f'{self.user.username}\'s simple rating about {self.movie.title}'
 
@@ -85,6 +91,12 @@ class DetailedRating(models.Model):
         validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
     entertainment_value = models.FloatField(
         validators=[MinValueValidator(0.5), MaxValueValidator(5.0)])
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'movie'], name='unique_detailed_rating')
+        ]
 
     def __str__(self):
         return f'{self.user.username}\'s detailed rating about {self.movie.title}'
