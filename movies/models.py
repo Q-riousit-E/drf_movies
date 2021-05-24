@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.db.models.fields import FloatField
 
 # Create your models here.
 
@@ -50,3 +51,15 @@ class SimpleRating(models.Model):
                              on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     rating = models.FloatField()
+
+
+class DetailedRating(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    originality = models.FloatField()
+    plot = models.FloatField()
+    cinematography = models.FloatField()
+    music_score = models.FloatField()
+    characters = models.FloatField()
+    entertainment_value = models.FloatField()
