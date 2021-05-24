@@ -97,7 +97,7 @@ class DetailedRatingGenerator():
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        user_seeder = UserSeeder(number=50)
+        user_seeder = UserSeeder(number=100)
         INSERTED_USER_PKS = list(user_seeder.execute().values())[0]
         INSERTED_USERS = [User.objects.get(
             pk=INSERTED_USER_PKS[i]) for i in range(len(INSERTED_USER_PKS))]
