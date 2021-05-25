@@ -1,4 +1,5 @@
-from django.db.models.query import QuerySet
+from django.db.models.aggregates import Avg
+from django.db.models.query import Prefetch, QuerySet
 from django.http.response import JsonResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from .models import Article, Comment, Movie, Genre, SimpleRating, DetailedRating
@@ -63,18 +64,30 @@ def movie_list(request):
 def movie_index(request):
     # Action, Animation, Comedy, Horror, Romance, Science Fiction
     genre_ids = [28, 16, 35, 27, 10749, 878]
+    action = Genre.objects.prefetch_related(
+        'movies', 'movies__simple_ratings').get(number=28)
     action = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=28).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
-    animation = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=16).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
+        action.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
+    # comedy = Genre.objects.prefetch_related(
+    #     'movies', 'movies__simple_ratings').get(number=28)
     # comedy = MovieIndexListSerializer(
-    #     get_object_or_404(Genre, number=35).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
-    horror = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=27).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
+    #     comedy.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
+    animation = Genre.objects.prefetch_related(
+        'movies', 'movies__simple_ratings').get(number=16)
+    animation = MovieIndexListSerializer(
+        animation.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
+    romance = Genre.objects.prefetch_related(
+        'movies', 'movies__simple_ratings').get(number=27)
     romance = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=10749).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
+        romance.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
+    horror = Genre.objects.prefetch_related(
+        'movies', 'movies__simple_ratings').get(number=10749)
+    horror = MovieIndexListSerializer(
+        horror.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
+    sci_fi = Genre.objects.prefetch_related(
+        'movies', 'movies__simple_ratings').get(number=878)
     sci_fi = MovieIndexListSerializer(
-        get_object_or_404(Genre, number=878).movies.filter(trailer_path__isnull=False).order_by('-release_date')[:20], many=True)
+        sci_fi.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
 
     data = {
         'action': action.data,
