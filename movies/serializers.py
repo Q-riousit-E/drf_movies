@@ -97,7 +97,14 @@ class DetailedRatingSerializer(serializers.ModelSerializer):
 
 
 class MovieSearchSerializer(serializers.ModelSerializer):
+    star_average = serializers.SerializerMethodField()
+
+    def get_star_average(self, obj):
+        average = obj.simple_ratings.all().aggregate(
+            Avg('rating')).get('rating__avg') or 0
+        average = round(average, 1)
+        return average
 
     class Meta:
         model = Movie
-        fields = ('id', 'title', 'poster_path', 'genres')
+        fields = ('id', 'title', 'poster_path', 'star_average',)

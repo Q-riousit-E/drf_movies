@@ -30,13 +30,14 @@ def genre_list(request):
 @permission_classes([])
 def movie_search(request):
     query = request.GET.get('q')
-    if query and query[0] == '#':
-        movies = Movie.objects.none()
-        genres = Genre.objects.filter(name__contains=query[1:])
-        for genre in genres:
-            movies = movies | genre.movies
-    else:
-        movies = Movie.objects.filter(title__contains=query)
+    movies = Movie.objects.none()
+    if query:
+        if query[0] == '#':
+            genres = Genre.objects.filter(name__contains=query[1:])
+            for genre in genres:
+                movies = movies | genre.movies
+        else:
+            movies = Movie.objects.filter(title__contains=query)
     serializer = MovieSearchSerializer(movies, many=True)
     return Response(serializer.data)
 
