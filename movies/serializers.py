@@ -94,3 +94,10 @@ class DetailedRatingSerializer(serializers.ModelSerializer):
         model = DetailedRating
         fields = '__all__'
         read_only_fields = ('movie', 'user')
+
+
+class MovieSearchSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Movie
+        fields = ('id', 'title', 'poster_path', 'genres')

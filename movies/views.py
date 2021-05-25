@@ -1,15 +1,13 @@
-from django.db.models import manager
+from django.db.models.query import QuerySet
 from django.http.response import JsonResponse
 from django.shortcuts import get_list_or_404, get_object_or_404
 from .models import Article, Comment, Movie, Genre, SimpleRating, DetailedRating
-from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSerializer, GenreSerializer, MovieIndexListSerializer, SimpleRatingSerializer, DetailedRatingSerializer
+from .serializers import ArticleListSerializer, ArticleSerializer, CommentSerializer, MovieSearchSerializer, MovieSerializer, GenreSerializer, MovieIndexListSerializer, SimpleRatingSerializer, DetailedRatingSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-
-# Create your views here.
 
 
 @api_view(['GET', 'POST'])
@@ -25,6 +23,22 @@ def genre_list(request):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+@authentication_classes([])
+@permission_classes([])
+def movie_search(request):
+    query = request.GET.get('q')
+    if query and query[0] == '#':
+        movies = Movie.objects.none()
+        genres = Genre.objects.filter(name__contains=query[1:])
+        for genre in genres:
+            movies = movies | genre.movies
+    else:
+        movies = Movie.objects.filter(title__contains=query)
+    serializer = MovieSearchSerializer(movies, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET', 'POST'])
