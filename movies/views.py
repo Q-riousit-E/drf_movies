@@ -102,6 +102,30 @@ def movie_index(request):
 
 
 @api_view(['GET'])
+@permission_classes([])
+def movie_recommendation(request):
+    if not request.user.is_authenticated or request.user.simple_ratings.count() == 0:
+        serializer = MovieSearchSerializer(Movie.objects.annotate(star_average=Avg(
+            'simple_ratings__rating')).order_by('-star_average', '-release_date')[:5], many=True)
+    else:
+        simple_ratings = request.user.simple_ratings.prefetch_related(
+            'movie').prefetch_related('movie__genres').order_by('-rating')[:50]
+        genre_count = {}
+        for simple_rating in simple_ratings:
+            genres = simple_rating.movie.genres.all()
+            for genre in genres:
+                genre_count[genre.name] = genre_count.get(genre.name, 0) + 1
+        favorite_genre_name = sorted(
+            genre_count.items(), key=lambda x: -x[1])[0][0]
+        favorite_genre = Genre.objects.get(name=favorite_genre_name)
+
+        serializer = MovieSearchSerializer(
+            favorite_genre.movies.order_by('-release_date')[:5], many=True)
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
 @authentication_classes([])
 @permission_classes([])
 def movie_detail(request, movie_pk):
