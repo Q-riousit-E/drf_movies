@@ -219,6 +219,44 @@ def article_list(request, movie_pk):
 
 
 @ api_view(['GET', 'POST'])
+@ permission_classes([])
+def review_set_list(request, movie_pk):
+    movie = Movie.objects.prefetch_related(
+        'simple_ratings', 'detailed_ratings', 'articles', 'simple_ratings__user').get(pk=movie_pk)
+    simple_ratings = movie.simple_ratings.all()
+
+    if not simple_ratings:
+        return Response(None)
+
+    detailed_ratings = movie.detailed_ratings.all()
+    articles = movie.articles.all()
+    users = [simple_rating.user for simple_rating in simple_ratings]
+    data = []
+    for user in users:
+        simple = simple_ratings.get(user=user)
+        detailed = detailed_ratings.filter(user=user).first()
+        if detailed:
+            detailed_rating = {
+                'originality': detailed.originality,
+                'plot': detailed.plot,
+                'characters': detailed.characters,
+                'cinematography': detailed.cinematography,
+                'music_score': detailed.music_score,
+                'entertainment_value': detailed.entertainment_value,
+            }
+        article = articles.filter(user=user).first()
+        data.append({
+            'user_id': user.id,
+            'username': user.username,
+            'simple_rating': simple.rating,
+            'detailed': detailed_rating if detailed else None,
+            'article': ArticleListSerializer(article).data if article else None,
+        })
+
+    return JsonResponse(data, safe=False)
+
+
+@ api_view(['GET', 'POST'])
 def my_article(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     serializer = ArticleSerializer(get_object_or_404(
