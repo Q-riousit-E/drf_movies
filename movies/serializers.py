@@ -109,8 +109,7 @@ class DetailedRatingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DetailedRating
-        fields = '__all__'
-        read_only_fields = ('movie', 'user')
+        exclude = ('id', 'movie', 'user')
 
 
 class MovieSearchSerializer(serializers.ModelSerializer):
