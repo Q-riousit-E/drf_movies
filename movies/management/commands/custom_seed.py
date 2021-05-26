@@ -157,3 +157,23 @@ class Command(BaseCommand):
         detailed_rating_generator.execute()
         article_generator = ArticleGenerator()
         article_generator.execute()
+        comment_generator = CommentGenerator()
+        comment_generator.execute()
+
+
+class CommentGenerator():
+    def __init__(self, users=None, articles=None):
+        self.users = users or User.objects.all()
+        self.number_of_users = self.users.count()
+        self.articles = articles or Article.objects.all()
+        self.number_of_articles = self.articles.count()
+        self.number_of_insertions = self.number_of_articles // 10 * self.number_of_users
+        self.faker = Faker('ko_KR')
+
+    def execute(self):
+        inserted_pks = [0] * self.number_of_insertions
+        nums = [i for i in range(self.number_of_articles)]
+        for user in self.users:
+            for article in random.sample(list(self.articles), self.number_of_articles // 100):
+                article = Comment.objects.create(
+                    user=user, article=article, content=self.faker.text())
