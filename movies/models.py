@@ -26,8 +26,9 @@ class Movie(models.Model):
 
 class Article(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             on_delete=models.CASCADE)
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+                             on_delete=models.CASCADE, related_name='articles')
+    movie = models.ForeignKey(
+        Movie, on_delete=models.CASCADE, related_name='articles')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
