@@ -38,7 +38,8 @@ class SimpleRatingGenerator():
 
         self.movies = movies or Movie.objects.all()
 
-        self.ratings = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0)
+        self.ratings = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
+                        4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0)
         self.ratings_upper_idx = len(self.ratings) - 1
 
     def execute(self):
@@ -72,7 +73,8 @@ class DetailedRatingGenerator():
 
         self.movies = movies or Movie.objects.all()
 
-        self.ratings = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0)
+        self.ratings = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
+                        4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0)
         self.ratings_upper_idx = len(self.ratings) - 1
 
     def execute(self):
