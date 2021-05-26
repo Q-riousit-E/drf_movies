@@ -3,6 +3,8 @@ from django_seed import Seed
 from django.contrib.auth import get_user_model
 import random
 from itertools import combinations, permutations
+
+from faker import Faker
 from movies.models import Movie, Article, Comment, SimpleRating, DetailedRating
 
 User = get_user_model()
@@ -118,6 +120,24 @@ class DetailedRatingGenerator():
         return inserted_pks
 
 
+class ArticleGenerator():
+    def __init__(self, users=None, movies=None):
+        self.users = users or User.objects.all()
+        self.number_of_users = self.users.count()
+        self.movies = movies or Movie.objects.all()
+        self.number_of_movies = self.movies.count()
+        self.number_of_insertions = self.number_of_movies // 5 * self.number_of_users
+        self.faker = Faker('ko_KR')
+
+    def execute(self):
+        inserted_pks = [0] * self.number_of_insertions
+        nums = [i for i in range(self.number_of_movies)]
+        for user in self.users:
+            for movie in random.sample(list(self.movies), self.number_of_movies // 5):
+                article = Article.objects.create(
+                    user=user, movie=movie, content=self.faker.text())
+
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
         user_seeder = UserSeeder(number=100)
@@ -135,3 +155,5 @@ class Command(BaseCommand):
         detailed_rating_generator = DetailedRatingGenerator(users=INSERTED_USERS, movie_user_idx_combinations=MOVIE_USER_IDX_COMBINATIONS,
                                                             max_number=len(INSERTED_USERS)*len(MOVIES), movies=MOVIES)
         detailed_rating_generator.execute()
+        article_generator = ArticleGenerator()
+        article_generator.execute()
