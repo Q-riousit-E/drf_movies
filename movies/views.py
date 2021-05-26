@@ -1,3 +1,4 @@
+from django.forms.models import model_to_dict
 from django.db.models.aggregates import Avg
 from django.db.models.query import Prefetch, QuerySet
 from django.http.response import JsonResponse
@@ -222,7 +223,7 @@ def article_list(request, movie_pk):
 @ permission_classes([])
 def review_set_list(request, movie_pk):
     movie = Movie.objects.prefetch_related(
-        'simple_ratings', 'detailed_ratings', 'articles', 'simple_ratings__user').get(pk=movie_pk)
+        'simple_ratings', 'detailed_ratings', 'articles').prefetch_related('simple_ratings__user', 'articles__comments').get(pk=movie_pk)
     simple_ratings = movie.simple_ratings.all()
 
     if not simple_ratings:
@@ -245,12 +246,15 @@ def review_set_list(request, movie_pk):
                 'entertainment_value': detailed.entertainment_value,
             }
         article = articles.filter(user=user).first()
+        if article:
+            article_dict = model_to_dict(article)
+            article_dict['comment_count'] = article.comments.count()
         data.append({
             'user_id': user.id,
             'username': user.username,
             'simple_rating': simple.rating,
             'detailed': detailed_rating if detailed else None,
-            'article': ArticleListSerializer(article).data if article else None,
+            'article':  article_dict if article else None,
         })
 
     return JsonResponse(data, safe=False)
