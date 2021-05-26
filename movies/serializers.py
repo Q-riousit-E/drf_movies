@@ -11,7 +11,7 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ('title', 'content', 'username', 'user')
+        fields = ('content', 'username', 'user')
         read_only_fields = ('user', 'movie',)
 
 
@@ -33,7 +33,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ('title', 'content', 'username',
+        fields = ('content', 'username',
                   'user', 'comment_set', 'comment_count')
         read_only_fields = ('user', 'movie',)
 
