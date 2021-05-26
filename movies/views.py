@@ -124,23 +124,23 @@ def movie_recommendation(request):
         favorite_genre_name = sorted(
             genre_count.items(), key=lambda x: -x[1])[0][0]
         favorite_genre = Genre.objects.get(name=favorite_genre_name)
-        print(seen_movie_ids)
         serializer = MovieSearchSerializer(
-            favorite_genre.movies.exclude(id__in=seen_movie_ids).order_by('-release_date')[:5], many=True)
+            favorite_genre.movies.exclude(id__in=seen_movie_ids).annotate(star_average=Avg(
+                'simple_ratings__rating')).order_by('-star_average')[:5], many=True)
 
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-@authentication_classes([])
-@permission_classes([])
+@ api_view(['GET'])
+@ authentication_classes([])
+@ permission_classes([])
 def movie_detail(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     serializer = MovieSerializer(movie)
     return Response(serializer.data)
 
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@ api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def movie_simple_rating(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     if request.method == 'GET':
@@ -170,7 +170,7 @@ def movie_simple_rating(request, movie_pk):
             return Response(serializer.data)
 
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@ api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def movie_detailed_rating(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     if request.method == 'GET':
@@ -201,8 +201,8 @@ def movie_detailed_rating(request, movie_pk):
             return Response(serializer.data)
 
 
-@api_view(['GET', 'POST'])
-@permission_classes([])
+@ api_view(['GET', 'POST'])
+@ permission_classes([])
 def article_list(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     if request.method == 'GET':
@@ -218,7 +218,7 @@ def article_list(request, movie_pk):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET', 'POST'])
+@ api_view(['GET', 'POST'])
 def my_article(request, movie_pk):
     movie = get_object_or_404(Movie, pk=movie_pk)
     serializer = ArticleSerializer(get_object_or_404(
