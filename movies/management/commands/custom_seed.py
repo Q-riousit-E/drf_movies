@@ -73,9 +73,22 @@ class DetailedRatingGenerator():
 
         self.movies = movies or Movie.objects.all()
 
-        self.ratings = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
-                        4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0)
-        self.ratings_upper_idx = len(self.ratings) - 1
+        self.rating_candidate1 = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
+                                  4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0)
+        self.rating_candidate2 = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
+                                  4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0)
+        self.rating_candidate3 = (
+            0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5)
+        self.rating_candidate4 = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
+                                  4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0)
+        self.rating_candidate5 = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
+                                  4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0)
+        self.rating_candidate6 = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5,
+                                  4.0, 4.5, 5.0, 3.0, 3.5, 4.0, 4.5, 4.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0, 4.5, 5.0)
+
+        self.rating_sets = ((self.rating_candidate1, len(
+            self.rating_candidate1) - 1), (self.rating_candidate2, len(self.rating_candidate2) - 1), (self.rating_candidate3, len(self.rating_candidate3) - 1), (self.rating_candidate4, len(self.rating_candidate4) - 1), (self.rating_candidate5, len(self.rating_candidate5) - 1), (self.rating_candidate6, len(self.rating_candidate6) - 1))
+        self.rating_sets_upper_idx = len(self.rating_sets) - 1
 
     def execute(self):
         inserted_pks = [0] * self.number_of_insertions
@@ -85,13 +98,21 @@ class DetailedRatingGenerator():
             kwargs = {
                 'movie': self.movies[movie_idx],
                 'user': self.users[user_idx],
-                'originality': self.ratings[random.randint(0, self.ratings_upper_idx)],
-                'plot': self.ratings[random.randint(0, self.ratings_upper_idx)],
-                'cinematography': self.ratings[random.randint(0, self.ratings_upper_idx)],
-                'music_score': self.ratings[random.randint(0, self.ratings_upper_idx)],
-                'characters': self.ratings[random.randint(0, self.ratings_upper_idx)],
-                'entertainment_value': self.ratings[random.randint(0, self.ratings_upper_idx)],
+                'originality': None,
+                'plot': None,
+                'cinematography': None,
+                'music_score': None,
+                'characters': None,
+                'entertainment_value': None,
             }
+            criteria = ['originality', 'plot', 'cinematography',
+                        'music_score', 'characters', 'entertainment_value']
+            for i in range(len(criteria)):
+                criterion = criteria[i]
+                rating_candidate, candidate_upper_idx = self.rating_sets[i]
+                kwargs[criterion] = rating_candidate[random.randint(
+                    0, candidate_upper_idx)]
+
             new_rating = DetailedRating.objects.create(**kwargs)
             inserted_pks[i] = new_rating.pk
         return inserted_pks
