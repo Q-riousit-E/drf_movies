@@ -212,6 +212,14 @@ def article_list(request, movie_pk):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+@api_view(['GET', 'POST'])
+def my_article(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    serializer = ArticleSerializer(get_object_or_404(
+        Article, user=request.user, movie=movie))
+    return Response(serializer.data)
+
+
 @ api_view(['GET', 'PUT', 'DELETE'])
 @ permission_classes([])
 def article_detail(request, article_pk):

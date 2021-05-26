@@ -13,6 +13,7 @@ urlpatterns = [
     path('movies/<int:movie_pk>/simple_rating/', views.movie_simple_rating),
     path('movies/<int:movie_pk>/detailed_rating/', views.movie_detailed_rating),
     path('movies/<int:movie_pk>/articles/', views.article_list),
+    path('movies/<int:movie_pk>/my_article/', views.my_article),
     path('articles/<int:article_pk>/', views.article_detail),
     path('articles/<int:article_pk>/comments/', views.create_comment),
     path('comments/<int:comment_pk>/', views.comment_detail),
