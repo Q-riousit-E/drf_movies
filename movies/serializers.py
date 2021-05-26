@@ -39,9 +39,16 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class MovieSerializer(serializers.ModelSerializer):
+    star_average = serializers.SerializerMethodField()
     simple_rating_counts = serializers.SerializerMethodField()
     detailed_ratings_average = serializers.SerializerMethodField()
     genre_names = serializers.SerializerMethodField()
+
+    def get_star_average(self, obj):
+        average = obj.simple_ratings.all().aggregate(
+            Avg('rating')).get('rating__avg') or 0
+        average = round(average, 1)
+        return average
 
     def get_simple_rating_counts(self, obj):
         ratings = (0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0)
