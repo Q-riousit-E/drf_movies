@@ -111,16 +111,18 @@ def movie_recommendation(request):
         simple_ratings = request.user.simple_ratings.prefetch_related(
             'movie').prefetch_related('movie__genres').order_by('-rating')[:50]
         genre_count = {}
+        seen_movie_ids = []
         for simple_rating in simple_ratings:
+            seen_movie_ids.append(simple_rating.movie.id)
             genres = simple_rating.movie.genres.all()
             for genre in genres:
                 genre_count[genre.name] = genre_count.get(genre.name, 0) + 1
         favorite_genre_name = sorted(
             genre_count.items(), key=lambda x: -x[1])[0][0]
         favorite_genre = Genre.objects.get(name=favorite_genre_name)
-
+        print(seen_movie_ids)
         serializer = MovieSearchSerializer(
-            favorite_genre.movies.order_by('-release_date')[:5], many=True)
+            favorite_genre.movies.exclude(id__in=seen_movie_ids).order_by('-release_date')[:5], many=True)
 
     return Response(serializer.data)
 
