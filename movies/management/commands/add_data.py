@@ -1,3 +1,4 @@
+from requests.api import post
 from movies.models import Movie, Genre
 from movies.serializers import MovieSerializer
 import requests
@@ -49,8 +50,11 @@ class Scraper:
             for movie in movies:
                 movie_id = movie.get('id')
                 genre_ids = movie['genre_ids']
-                if movie.get('poster_path'):
-                    movie['poster_path'] = f'{self.IMAGE_BASE_URL}{movie["poster_path"]}'
+                poster_paths = self.get_poster_paths(movie_id)
+                if not poster_paths:
+                    continue
+                for i in range(1, 5):
+                    movie[f'poster_path{i}'] = f'{self.IMAGE_BASE_URL}/{poster_paths[i-1]}'
                 movie_key = self.get_video_key(movie_id)
                 if movie_key:
                     movie['trailer_path'] = f'{self.TRAILER_BASE_URL}/{movie_key}'
@@ -91,6 +95,16 @@ class Scraper:
             break
 
         return info
+
+    def get_poster_paths(self, movie_id):
+        POSTERS_URL = f'{self.BASE_URL}/movie/{movie_id}/images'
+        params = {'api_key': self.API_KEY}
+        res = requests.get(POSTERS_URL, params=params)
+        data = res.json()
+        posters = data.get('posters')
+        if len(posters) < 4:
+            return None
+        return [poster.get('file_path') for poster in posters[:4]]
 
 
 class Command(BaseCommand):
