@@ -34,11 +34,15 @@ def movie_search(request):
     movies = Movie.objects.none()
     if query:
         if query[0] == '#':
-            genres = Genre.objects.filter(name__contains=query[1:])
+            genres = Genre.objects.prefetch_related(
+                'movies', 'movies__simple_ratings').filter(name__contains=query[1:])
             for genre in genres:
-                movies = movies | genre.movies
+                movies = movies | genre.movies.annotate(
+                    star_average=Avg('simple_ratings__rating'))
+            movies = movies.order_by('-star_average')
         else:
-            movies = Movie.objects.filter(title__contains=query)
+            movies = Movie.objects.prefetch_related(
+                'simple_ratings').filter(title__contains=query).annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average')
     serializer = MovieSearchSerializer(movies, many=True)
     return Response(serializer.data)
 
