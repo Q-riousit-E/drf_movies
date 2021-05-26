@@ -153,7 +153,7 @@ class Command(BaseCommand):
         simple_rating_generator.execute()
 
         detailed_rating_generator = DetailedRatingGenerator(users=INSERTED_USERS, movie_user_idx_combinations=MOVIE_USER_IDX_COMBINATIONS,
-                                                            max_number=len(INSERTED_USERS)*len(MOVIES), movies=MOVIES)
+                                                            max_number=(len(INSERTED_USERS)*len(MOVIES))//10, movies=MOVIES)
         detailed_rating_generator.execute()
         article_generator = ArticleGenerator()
         article_generator.execute()
