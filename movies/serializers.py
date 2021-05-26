@@ -4,9 +4,14 @@ from .models import Article, Comment, DetailedRating, Movie, Genre, SimpleRating
 
 
 class ArticleListSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        return obj.user.username
+
     class Meta:
         model = Article
-        fields = '__all__'
+        fields = ('title', 'content', 'username', 'user')
         read_only_fields = ('user', 'movie',)
 
 
@@ -21,10 +26,15 @@ class ArticleSerializer(serializers.ModelSerializer):
     comment_set = CommentSerializer(many=True, read_only=True)
     comment_count = serializers.IntegerField(
         source='comment_set.count', read_only=True)
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        return obj.user.username
 
     class Meta:
         model = Article
-        fields = '__all__'
+        fields = ('title', 'content', 'username',
+                  'user', 'comment_set', 'comment_count')
         read_only_fields = ('user', 'movie',)
 
 
