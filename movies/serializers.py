@@ -16,6 +16,11 @@ class ArticleListSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
+
+    def get_username(self, obj):
+        return obj.user.username
+
     class Meta:
         model = Comment
         fields = '__all__'

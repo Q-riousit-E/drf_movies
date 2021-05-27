@@ -249,8 +249,8 @@ def review_set_list(request, movie_pk):
         if article:
             article_dict = model_to_dict(article)
             article_dict['comment_count'] = article.comments.count()
-            article_dict['comment_set'] = list(model_to_dict(
-                comment) for comment in article.comments.all())
+            article_dict['comment_set'] = CommentSerializer(
+                article.comments.all(), many=True).data
         if not detailed and not article:
             continue
         data.append({
