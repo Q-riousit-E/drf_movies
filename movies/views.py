@@ -249,6 +249,8 @@ def review_set_list(request, movie_pk):
         if article:
             article_dict = model_to_dict(article)
             article_dict['comment_count'] = article.comments.count()
+        if not detailed and not article:
+            continue
         data.append({
             'user_id': user.id,
             'username': user.username,
