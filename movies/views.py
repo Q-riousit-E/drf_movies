@@ -82,11 +82,11 @@ def movie_index(request):
     animation = MovieIndexListSerializer(
         animation.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
     romance = Genre.objects.prefetch_related(
-        'movies', 'movies__simple_ratings').get(number=27)
+        'movies', 'movies__simple_ratings').get(number=10749)
     romance = MovieIndexListSerializer(
         romance.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
     horror = Genre.objects.prefetch_related(
-        'movies', 'movies__simple_ratings').get(number=10749)
+        'movies', 'movies__simple_ratings').get(number=27)
     horror = MovieIndexListSerializer(
         horror.movies.annotate(star_average=Avg('simple_ratings__rating')).order_by('-star_average', '-release_date')[:20], many=True)
     sci_fi = Genre.objects.prefetch_related(
