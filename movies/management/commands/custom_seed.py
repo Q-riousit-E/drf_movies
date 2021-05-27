@@ -126,10 +126,12 @@ class ArticleGenerator():
         self.movies = movies or Movie.objects.all()
         self.number_of_movies = self.movies.count()
         self.number_of_insertions = self.number_of_movies // 5 * self.number_of_users
-        self.contents = ['나쁘지 않은 영화였습니다. 킬링타임 용으로 추천드려요~', '가족과 함께 보면 좋을 영화!',
+        self.contents = ['간만에 좋은 영화였습니다. 추천드려요~', '가족과 함께 보면 좋을 영화!',
                          '예전에 보고 너무 인상 깊어서 다시 봤는데, 그 때는 느끼지 못했던 감성과 메세지를 얻어갑니다. 볼 때마다 감회가 새로운 영화..!',
-                         '음....... 안 본 눈 삽니다 ㅠㅠ',
-                         '역시 믿고 보는 배우...! 믿고 보는 감독...! 최고입니다.']
+                         '이런 영화를 여태 안 보고 뭐했는지..!',
+                         '역시 믿고 보는 배우...! 믿고 보는 감독...! 최고입니다.',
+                         '인생 작품',
+                         '개인적으로 너무 좋아하는 영화라서 5번째 보는 중']
         self.number_of_contents = len(self.contents)
 
     def execute(self):
@@ -148,7 +150,7 @@ class CommentGenerator():
         self.number_of_articles = self.articles.count()
         self.number_of_insertions = self.number_of_articles // 10 * self.number_of_users
         self.contents = [
-            '동감..!', '음.... 저는 이 의견에 동의할 수 없습니다.', '오.. 저도 같은 생각이에요', '22222222']
+            '동감..!', '저랑 취향이 비슷하신 듯!!', '오.. 저도 같은 생각이에요', '22222222', 'ㅇㅇ 간만에 괜찮은 영화 발견', '한 번 봐야겠네요!']
         self.number_of_contents = len(self.contents)
 
     def execute(self):
