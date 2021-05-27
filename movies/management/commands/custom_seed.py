@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 import random
 from itertools import combinations, permutations
 
-from faker import Faker
 from movies.models import Movie, Article, Comment, SimpleRating, DetailedRating
 
 User = get_user_model()
@@ -127,15 +126,37 @@ class ArticleGenerator():
         self.movies = movies or Movie.objects.all()
         self.number_of_movies = self.movies.count()
         self.number_of_insertions = self.number_of_movies // 5 * self.number_of_users
-        self.faker = Faker('ko_KR')
+        self.contents = ['나쁘지 않은 영화였습니다. 킬링타임 용으로 추천드려요~', '가족과 함께 보면 좋을 영화!',
+                         '예전에 보고 너무 인상 깊어서 다시 봤는데, 그 때는 느끼지 못했던 감성과 메세지를 얻어갑니다. 볼 때마다 감회가 새로운 영화..!',
+                         '음....... 안 본 눈 삽니다 ㅠㅠ',
+                         '역시 믿고 보는 배우...! 믿고 보는 감독...! 최고입니다.']
+        self.number_of_contents = len(self.contents)
 
     def execute(self):
-        inserted_pks = [0] * self.number_of_insertions
         nums = [i for i in range(self.number_of_movies)]
         for user in self.users:
             for movie in random.sample(list(self.movies), self.number_of_movies // 5):
                 article = Article.objects.create(
-                    user=user, movie=movie, content=self.faker.text())
+                    user=user, movie=movie, content=self.contents[random.randint(0, self.number_of_contents - 1)])
+
+
+class CommentGenerator():
+    def __init__(self, users=None, articles=None):
+        self.users = users or User.objects.all()
+        self.number_of_users = self.users.count()
+        self.articles = articles or Article.objects.all()
+        self.number_of_articles = self.articles.count()
+        self.number_of_insertions = self.number_of_articles // 10 * self.number_of_users
+        self.contents = [
+            '동감..!', '음.... 저는 이 의견에 동의할 수 없습니다.', '오.. 저도 같은 생각이에요', '22222222']
+        self.number_of_contents = len(self.contents)
+
+    def execute(self):
+        nums = [i for i in range(self.number_of_articles)]
+        for user in self.users:
+            for article in random.sample(list(self.articles), self.number_of_articles // 100):
+                article = Comment.objects.create(
+                    user=user, article=article, content=self.contents[random.randint(0, self.number_of_contents - 1)])
 
 
 class Command(BaseCommand):
@@ -159,21 +180,3 @@ class Command(BaseCommand):
         article_generator.execute()
         comment_generator = CommentGenerator()
         comment_generator.execute()
-
-
-class CommentGenerator():
-    def __init__(self, users=None, articles=None):
-        self.users = users or User.objects.all()
-        self.number_of_users = self.users.count()
-        self.articles = articles or Article.objects.all()
-        self.number_of_articles = self.articles.count()
-        self.number_of_insertions = self.number_of_articles // 10 * self.number_of_users
-        self.faker = Faker('ko_KR')
-
-    def execute(self):
-        inserted_pks = [0] * self.number_of_insertions
-        nums = [i for i in range(self.number_of_articles)]
-        for user in self.users:
-            for article in random.sample(list(self.articles), self.number_of_articles // 100):
-                article = Comment.objects.create(
-                    user=user, article=article, content=self.faker.text())
