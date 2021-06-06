@@ -167,3 +167,5 @@ CORS_ALLOW_ALL_ORIGINS = True
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(hours=6),
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
