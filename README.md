@@ -4,6 +4,12 @@
 
 ---
 
+### 프로젝트 다이어그램
+
+<img src="assets/images/backend_diagram.png" width="50%">
+
+---
+
 ### 팀원 정보 및 역할 분담
 
 - 박성재: 백엔드
